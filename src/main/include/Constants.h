@@ -41,7 +41,7 @@
 
 //Allowing hardware to be used
 //NOHW disables all hardware in the code - Please keep putting into later codes, I don't want to go through all the code again -Zach
-//#define NOHW
+#define NOHW
 //#define SEND_VIDEO
 //M_DISTANCE needs to be commented to not have M_DISTANCE code run. Uncommented to run the code.
 

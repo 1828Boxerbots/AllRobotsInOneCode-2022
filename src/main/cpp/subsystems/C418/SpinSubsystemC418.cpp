@@ -13,10 +13,12 @@
 
 SpinSubsystemC418::SpinSubsystemC418(I2CMultiplexerDriver *pMultiplexerDriver)
 {
+    #ifndef NOHW
     m_pMultiplexerDiver = pMultiplexerDriver;
 
 #ifdef M_COLOR
     m_pColorSensor = new MuxColorSensorDriver(I2C_PORT_MULTIPLEXER_C418, *pMultiplexerDriver, U8T_LINE_COLORSENSOR_C418);
+#endif
 #endif
 }
 

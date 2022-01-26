@@ -34,7 +34,7 @@ units::degree_t DriveTrainSubsystemRocky::GyroGetAngle()
   //frc::SmartDashboard::PutNumber("GyroAngle", m_gyroAngle);
   return m_gyroAngle;
 #else
-  return 0;
+  return 0_deg;
 #endif
 }
 
@@ -173,42 +173,42 @@ void DriveTrainSubsystemRocky::EnableAnticollision(bool enable)
 
 double DriveTrainSubsystemRocky::WhereToTurn( double deadZoneLocation, int deadZoneRange)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     return m_camera.WhereToTurn(deadZoneLocation, deadZoneRange);
   #endif
 }
 
 void DriveTrainSubsystemRocky::SetHSVHigh(int HSV, int value)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     m_camera.SetHigh(HSV, value);
   #endif
 }
 
 void DriveTrainSubsystemRocky::SetHSVLow(int HSV, int value)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     m_camera.SetLow(HSV, value);
   #endif
 }
 
 void DriveTrainSubsystemRocky::SetVisionFMSColor(OldCameraVision::VisionColors color)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     m_camera.SetFMSColor(color);
   #endif
 }
 
 void DriveTrainSubsystemRocky::SetLookingColorV(OldCameraVision::VisionColors color)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     m_camera.SetLookingColor(color);
   #endif
 }
 
 OldCameraVision::VisionColors DriveTrainSubsystemRocky::GetLookingColorV()
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     return m_camera.GetLookingColor();
   #else
     return OldCameraVision::VisionColors::INVALID_COLOR;
@@ -217,28 +217,28 @@ OldCameraVision::VisionColors DriveTrainSubsystemRocky::GetLookingColorV()
 
 double DriveTrainSubsystemRocky::GetCentroidY()
 {
-  #ifndef NO_HW
+  #ifndef NOHW
   return m_camera.GetCentroidY();
   #endif
 }
 
 double DriveTrainSubsystemRocky::GetCentroidX()
 {
-  #ifndef NO_HW
+  #ifndef NOHW
   return m_camera.GetCentroidX();
   #endif
 }
 
 void DriveTrainSubsystemRocky::SetVisionCrop(int cropX, int cropY, int cropW, int cropH)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
   m_camera.SetCrop(cropX, cropY, cropW, cropH);
   #endif
 }
 
 void DriveTrainSubsystemRocky::GetVisionSize(int *pHeight, int *pWidth)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
   m_camera.GetSize(pHeight, pWidth);
   #endif
 }

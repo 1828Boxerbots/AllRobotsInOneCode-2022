@@ -9,6 +9,7 @@
 
 DriveTrainSubsystemC418::DriveTrainSubsystemC418(I2CMultiplexerDriver *pMultiplexerDriver)
 {
+  #ifndef NOHW
   m_pMultiplexerDriver = pMultiplexerDriver;
 
 #ifdef M_LIDAR
@@ -23,6 +24,7 @@ DriveTrainSubsystemC418::DriveTrainSubsystemC418(I2CMultiplexerDriver *pMultiple
   m_pMuxRightDistance = new MuxDistanceSensorDriver(DISTANCESENSOR_PORT_C418, I2C_ADDR_RIGHTDISTANCESENSOR_C418, *m_pMultiplexerDriver, U8T_LINE_RIGHTDISTANCESENSOR_C418);
 #endif
 
+#endif
 }
 
 void DriveTrainSubsystemC418::SetMotorL(double speed)
@@ -58,16 +60,19 @@ double DriveTrainSubsystemC418::GetMotorR()
 #ifndef NOHW
   return m_rightMotor.Get();
 #else
-  reutnr 0;
+  return 0;
 #endif
 
 }
 
 double DriveTrainSubsystemC418::WhereToTurn( double deadZoneLocation, int deadZoneRange)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     return m_camera.WhereToTurn(deadZoneLocation, deadZoneRange);
+  #else
+    return 0.0;
   #endif
+
 }
 
 void DriveTrainSubsystemC418::Init()
@@ -120,6 +125,7 @@ double DriveTrainSubsystemC418::IMUGetAngle()
   Util::Log("IsIMU", false);
   units::degree_t imuY = -1_deg;
   units::degree_t imuZ = -1_deg;
+#ifndef NOHW
 // If this isn't giving you the correct angle, try .GetAngleZ() or .GetAngleX()
 #ifdef M_IMU
   m_imuAngle = m_imu.GetAngleX();
@@ -137,6 +143,9 @@ double DriveTrainSubsystemC418::IMUGetAngle()
   
   Util::Log("IsIMU", true);
   return (double)m_imuAngle;
+#else
+  return 0;
+#endif
 #else
   return 0;
 #endif
@@ -174,23 +183,28 @@ double DriveTrainSubsystemC418::GetLeftEncoderRaw()
 {
 #ifndef NOHW
   Util::Log("LeftEncoder Raw", m_leftEncoder.Get(), "DriveTrainSubsystemC418");
-#endif
   return m_leftEncoder.Get();
+#else
+  return -1;
+#endif
 }
 
 double DriveTrainSubsystemC418::GetRightEncoderRaw()
 {
 #ifndef NOHW
   Util::Log("RightEncoder Raw", m_rightEncoder.Get(), "DriveTrainSubsystemC418");
-#endif
   return m_rightEncoder.Get();
+#else
+  return -1;
+#endif
 }
 
 void DriveTrainSubsystemC418::ResetEncoder()
 {
+#ifndef NOHW
   m_leftEncoder.Reset();
   m_rightEncoder.Reset();
-
+#endif
   m_rightEncoderSim = 0.0;
   m_leftEncoderSim = 0.0;
   LogEncoder();
@@ -200,7 +214,10 @@ void DriveTrainSubsystemC418::ResetEncoder()
 units::degree_t DriveTrainSubsystemC418::GyroGetAngle()
 {
 #ifdef M_IMU
-  units::degree_t m_gyroAngle = m_imu.GetAngleX();
+  units::degree_t m_gyroAngle = -1_deg;
+  #ifndef NOHW
+  m_gyroAngle = m_imu.GetAngleX();
+  #endif
   //m_imu.LogAllValues(); //causes lag
   return m_gyroAngle;
 #else
@@ -250,6 +267,7 @@ double DriveTrainSubsystemC418::GetDistanceSensorDetectionDistanceRight()
 
 double DriveTrainSubsystemC418::GetLidarDetectionDistance()
 {
+#ifndef NOHW
 #ifdef M_LIDAR
   /*if(m_hasAntiCollision == false)
   {
@@ -258,6 +276,9 @@ double DriveTrainSubsystemC418::GetLidarDetectionDistance()
   double val = m_pLidar->GetDistanceInInches();
   frc::SmartDashboard::PutNumber("DriveTrain Lidar", val);
   return val;
+#else
+  return 1;
+#endif
 #else
   return 1;
 #endif
@@ -293,7 +314,10 @@ void DriveTrainSubsystemC418::PrecisionMovementLidar(double wantedDistance, doub
 {
 #ifdef M_LIDAR
   const double DEAD_ZONE = 5.0;
-  double currentDistance = m_pLidar->GetDistanceInInches();
+  double currentDistance =  -1;
+  #ifndef NOHW
+  currentDistance = m_pLidar->GetDistanceInInches();
+  #endif
   Util::Log("Lidar", "Activated");
   if(currentDistance < 0) {  Util::Log("Lidar","No See");  }
   while (currentDistance < (wantedDistance - DEAD_ZONE) || currentDistance > (wantedDistance + DEAD_ZONE))
@@ -306,7 +330,9 @@ void DriveTrainSubsystemC418::PrecisionMovementLidar(double wantedDistance, doub
     {
       Forward(speed);
     }
+    #ifndef NOHW
     currentDistance = m_pLidar->GetDistanceInInches();
+    #endif
     Util::Log("LidarDistance", currentDistance);
   }
   Stop();
@@ -375,35 +401,35 @@ void DriveTrainSubsystemC418::GoAroundCone(bool turnRight)
 
 void DriveTrainSubsystemC418::SetHSVHigh(int HSV, int value)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     m_camera.SetHigh(HSV, value);
   #endif
 }
 
 void DriveTrainSubsystemC418::SetHSVLow(int HSV, int value)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     m_camera.SetLow(HSV, value);
   #endif
 }
 
 void DriveTrainSubsystemC418::SetVisionFMSColor(OldCameraVision::VisionColors color)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     m_camera.SetFMSColor(color);
   #endif
 }
 
 void DriveTrainSubsystemC418::SetLookingColorV(OldCameraVision::VisionColors color)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     m_camera.SetLookingColor(color);
   #endif
 }
 
 OldCameraVision::VisionColors DriveTrainSubsystemC418::GetLookingColorV()
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     return m_camera.GetLookingColor();
   #else
     return OldCameraVision::VisionColors::INVALID_COLOR;
@@ -412,35 +438,35 @@ OldCameraVision::VisionColors DriveTrainSubsystemC418::GetLookingColorV()
 
 double DriveTrainSubsystemC418::GetCentroidY()
 {
-  #ifndef NO_HW
+  #ifndef NOHW
   return m_camera.GetCentroidY();
   #endif
 }
 
 double DriveTrainSubsystemC418::GetCentroidX()
 {
-  #ifndef NO_HW
+  #ifndef NOHW
   return m_camera.GetCentroidX();
   #endif
 }
 
 void DriveTrainSubsystemC418::SetVisionCrop(int cropX, int cropY, int cropW, int cropH)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
   m_camera.SetCrop(cropX, cropY, cropW, cropH);
   #endif
 }
 
 void DriveTrainSubsystemC418::GetVisionSize(int *pHeight, int *pWidth)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
   m_camera.GetSize(pHeight, pWidth);
   #endif
 }
 
 void DriveTrainSubsystemC418::SetContArea(bool isLow, double value)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     if(isLow)
     {
       m_camera.m_minArea = value;
@@ -453,7 +479,7 @@ void DriveTrainSubsystemC418::SetContArea(bool isLow, double value)
 }
 void DriveTrainSubsystemC418::SetContRatio(bool isLow, double value)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     if(isLow)
     {
       m_camera.m_minRatio = value;
@@ -466,7 +492,7 @@ void DriveTrainSubsystemC418::SetContRatio(bool isLow, double value)
 }
 void DriveTrainSubsystemC418::SetContSolid(bool isLow, double value)
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     if(isLow)
     {
       m_camera.m_minSolid = value;
@@ -480,7 +506,7 @@ void DriveTrainSubsystemC418::SetContSolid(bool isLow, double value)
 
 void DriveTrainSubsystemC418::SetContSave()
 {
-  #ifndef NO_HW
+  #ifndef NOHW
     //Area, Ratio, Solid
     //Low, high
     m_camera.m_minSolid = m_camera.m_saveCheck[0];
